@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trái tim Lý Tuân</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #000;
+            overflow: hidden;
+        }
+
+        canvas {
+            display: block;
+        }
+
+        #text {
+            position: fixed;
+            bottom: 50px;
+            width: 100%;
+            text-align: center;
+            color: white;
+            font-size: 24px;
+            font-family: Arial;
+            text-shadow: 0 0 15px #ff1493;
+        }
+    </style>
+</head>
+
+<body>
+
+<canvas id="canvas"></canvas>
+
+<div id="text">❤️ Lý Tuân ❤️</div>
+
+<script>
+
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+let hat = [];
+let soHat = 2500;
+let thoiGian = 0;
+
+
+// =========================
+// TẠO HẠT TRÁI TIM
+// =========================
+
+function taoTraiTim() {
+
+    hat = [];
+
+    for (let i = 0; i < soHat; i++) {
+
+        let t = Math.random() * Math.PI * 2;
+
+        let x =
+            16 * Math.pow(Math.sin(t), 3);
+
+        let y =
+            13 * Math.cos(t)
+            - 5 * Math.cos(2 * t)
+            - 2 * Math.cos(3 * t)
+            - Math.cos(4 * t);
+
+        let tiLe = 17;
+
+        let doLech =
+            (Math.random() - 0.5) * 18;
+
+        hat.push({
+
+            x: x * tiLe + doLech,
+
+            y: -y * tiLe + doLech,
+
+            size:
+                Math.random() * 2.5 + 0.5,
+
+            tocDo:
+                Math.random() * 0.05 + 0.01,
+
+            goc:
+                Math.random() * Math.PI * 2,
+
+            trang:
+                Math.random() > 0.88
+
+        });
+
+    }
+}
+
+
+// =========================
+// VẼ TRÁI TIM
+// =========================
+
+function ve() {
+
+    ctx.fillStyle =
+        "rgba(0,0,0,0.22)";
+
+    ctx.fillRect(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+    );
+
+    thoiGian += 0.035;
+
+    // Hiệu ứng tim đập
+    let dap =
+        1 + Math.sin(thoiGian) * 0.08;
+
+    let tamX =
+        canvas.width / 2;
+
+    let tamY =
+        canvas.height / 2;
+
+    for (let i = 0; i < hat.length; i++) {
+
+        let p = hat[i];
+
+        p.goc += p.tocDo;
+
+        let x =
+            tamX + p.x * dap;
+
+        let y =
+            tamY + p.y * dap;
+
+        let sang =
+            0.5 +
+            Math.sin(p.goc) * 0.5;
+
+
+        // Hạt trắng
+        if (p.trang) {
+
+            ctx.fillStyle =
+                "rgba(255,255,255," +
+                sang +
+                ")";
+
+        }
+
+        // Hạt hồng
+        else {
+
+            ctx.fillStyle =
+                "rgba(255,40,150," +
+                (0.5 + sang * 0.5) +
+                ")";
+        }
+
+
+        ctx.beginPath();
+
+        ctx.arc(
+            x,
+            y,
+            p.size,
+            0,
+            Math.PI * 2
+        );
+
+        ctx.fill();
+    }
+
+    requestAnimationFrame(ve);
+}
+
+
+// =========================
+// CLICK → TIM BAY RA
+// =========================
+
+canvas.onclick = function(event) {
+
+    for (let i = 0; i < 40; i++) {
+
+        let tim =
+            document.createElement("div");
+
+        tim.innerHTML = "❤️";
+
+        tim.style.position = "fixed";
+
+        tim.style.left =
+            event.clientX + "px";
+
+        tim.style.top =
+            event.clientY + "px";
+
+        tim.style.color = "pink";
+
+        tim.style.fontSize =
+            Math.random() * 15 + 10 + "px";
+
+        tim.style.pointerEvents =
+            "none";
+
+        tim.style.transition =
+            "1.2s";
+
+        document.body.appendChild(tim);
+
+
+        setTimeout(function() {
+
+            tim.style.transform =
+                "translate(" +
+                (Math.random() * 250 - 125) +
+                "px, -" +
+                (Math.random() * 250 + 50) +
+                "px)";
+
+            tim.style.opacity = "0";
+
+        }, 10);
+
+
+        setTimeout(function() {
+
+            tim.remove();
+
+        }, 1300);
+    }
+};
+
+
+// =========================
+// THAY ĐỔI KÍCH THƯỚC
+// =========================
+
+window.onresize = function() {
+
+    canvas.width =
+        window.innerWidth;
+
+    canvas.height =
+        window.innerHeight;
+};
+
+
+// =========================
+// CHẠY
+// =========================
+
+taoTraiTim();
+
+ve();
+
+</script>
+
+</body>
+</html>
